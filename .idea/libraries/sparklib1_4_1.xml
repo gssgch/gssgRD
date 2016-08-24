@@ -1,0 +1,60 @@
+<component name="libraryTable">
+  <library name="sparklib1.4.1">
+    <CLASSES>
+      <root url="jar://F:/BigData/install/install_spark/spark-1.4.1-bin-hadoop2.4/lib/datanucleus-api-jdo-3.2.6.jar!/" />
+      <root url="jar://F:/BigData/install/install_spark/spark-1.4.1-bin-hadoop2.4/lib/datanucleus-core-3.2.10.jar!/" />
+      <root url="jar://F:/BigData/install/install_spark/spark-1.4.1-bin-hadoop2.4/lib/datanucleus-rdbms-3.2.9.jar!/" />
+      <root url="jar://F:/BigData/install/install_spark/spark-1.4.1-bin-hadoop2.4/lib/spark-1.4.1-yarn-shuffle.jar!/" />
+      <root url="jar://F:/BigData/install/install_spark/spark-1.4.1-bin-hadoop2.4/lib/spark-assembly-1.4.1-hadoop2.4.0.jar!/" />
+      <root url="jar://F:/BigData/install/install_spark/spark-1.4.1-bin-hadoop2.4/lib/spark-examples-1.4.1-hadoop2.4.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://F:/BigData/install/install_spark/spark-1.4.1-bin-hadoop2.4/lib/spark-assembly-1.4.1-hadoop2.4.0.jar!/" />
+      <root url="jar://F:/BigData/install/install_spark/spark-1.4.1-bin-hadoop2.4/lib/spark-examples-1.4.1-hadoop2.4.0.jar!/" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/bagel/src/main/scala" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/core/src/main/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/core/src/main/scala" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/core/src/test/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/dev/audit-release/maven_app_core/src/main/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/examples/src/main/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/external/flume/src/main/scala" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/external/flume/src/test/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/external/kafka/src/main/scala" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/external/kafka/src/test/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/external/mqtt/src/main/scala" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/external/mqtt/src/test/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/external/twitter/src/main/scala" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/external/twitter/src/test/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/external/zeromq/src/main/scala" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/external/zeromq/src/test/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/extras/java8-tests/src/test/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/extras/kinesis-asl/src/main/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/extras/kinesis-asl/src/test/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/graphx/src/main/scala" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/launcher/src/main/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/launcher/src/test/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/mllib/src/main/scala" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/mllib/src/test/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/network/common/src/main/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/network/common/src/test/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/network/shuffle/src/main/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/network/shuffle/src/test/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/network/yarn/src/main/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/sql/catalyst/src/main/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/sql/catalyst/src/main/scala" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/sql/core/src/main/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/sql/core/src/test/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/sql/hive/src/main/scala" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/sql/hive/src/test/java/test" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/streaming/src/main/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/streaming/src/main/scala" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/streaming/src/test/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/unsafe/src/main/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1/unsafe/src/test/java" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1-bin-hadoop2.4" />
+      <root url="file://F:/BigData/install/install_spark/spark-1.4.1-bin-hadoop2.4/examples/src/main/java" />
+    </SOURCES>
+  </library>
+</component>
