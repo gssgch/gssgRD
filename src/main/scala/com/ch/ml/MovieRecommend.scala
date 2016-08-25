@@ -10,6 +10,7 @@ import org.apache.spark.mllib.recommendation.{ALS, Rating, MatrixFactorizationMo
 
 /**
   * 使用sparkML实现电影推荐系统
+  * 小象参考答案
   * Created by ch on 2016/8/25.
   */
 object MovieRecommend {

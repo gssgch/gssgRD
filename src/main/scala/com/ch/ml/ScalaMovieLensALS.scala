@@ -1,11 +1,8 @@
 package com.ch.ml
 
-/**
-  * Created by ch on 2016/8/25.
-  */
-
 import java.util.Random
 
+import org.apache.log4j.{Logger, Level}
 import org.apache.spark.mllib.recommendation.{ALS, MatrixFactorizationModel, Rating}
 import org.apache.spark.rdd._
 import org.apache.spark.{SparkConf, SparkContext}
@@ -13,13 +10,18 @@ import org.apache.spark.{SparkConf, SparkContext}
 /**
   * see:https://github.com/mohit-shrma/RandomSamples/blob/d9f1117bc21bb09d9fa858bc6d95e08e753e6fa0/SparkScala/CollabFilter/src/main/scala/MovieLensALS.scala
   */
+
+/**
+  * Created by ch on 2016/8/25.
+  * 使用sparkMl 实现电影推荐，网上copy
+  */
+
 object ScalaMovieLensALS {
 
   def main(args: Array[String]) {
 
-    //import org.apache.log4j.{Logger,Level}
-    //Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
-    //Logger.getLogger("org.eclipse.jetty.server").setLevel(Level.OFF)
+    Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
+    Logger.getLogger("org.eclipse.jetty.server").setLevel(Level.OFF)
 
     if (args.length != 2) {
       println("Usage: /path/to/spark/bin/spark-submit --driver-memory 2g --class com.javachen.spark.examples.mllib.ScalaMovieLensALS " +
@@ -63,6 +65,35 @@ object ScalaMovieLensALS {
       .map(x => (x, movies(x)))
       .toSeq
     val myRatings = elicitateRatings(selectedMovies)
+
+    /*Please rate following movie (1-5(best), or 0 if not seen):
+    Raiders of the Lost Ark (1981): 4
+    Fargo (1996): 3
+    Sixth Sense, The (1999): 4
+    Princess Bride, The (1987): 4
+    Terminator, The (1984): 4
+    Toy Story (1995): 5
+    Gladiator (2000): 4
+    Blade Runner (1982): 3
+    Who Framed Roger Rabbit? (1988): 4
+    One Flew Over the Cuckoo's Nest (1975): 5
+    Abyss, The (1989): 4
+
+    ---begin---Rating(0,1198,4.0)
+    Rating(0,608,3.0)
+    Rating(0,2762,4.0)
+    Rating(0,1197,4.0)
+    Rating(0,1240,4.0)
+    Rating(0,1,5.0)
+    Rating(0,3578,4.0)
+    Rating(0,541,3.0)
+    Rating(0,2987,4.0)
+    Rating(0,1193,5.0)
+    Rating(0,1127,4.0)
+*/
+      printf("\n---begin---")
+    myRatings.foreach(println)
+    printf("\n---end---")
     //convert received ratings to RDD[Rating], now this can be worked in parallel
     val myRatingsRDD = sc.parallelize(myRatings)
 
