@@ -1,4 +1,4 @@
-package ch.cn.xxspark
+package com.ch.xxspark
 
 import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
