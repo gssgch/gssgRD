@@ -1,12 +1,13 @@
-package com.ch.ml
+package com.ch.ml.movieRecommend
 
 import java.io.File
-import scala.io.Source
+
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.SparkConf
-import org.apache.spark.SparkContext
+import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.mllib.recommendation.{ALS, MatrixFactorizationModel, Rating}
 import org.apache.spark.rdd._
-import org.apache.spark.mllib.recommendation.{ALS, Rating, MatrixFactorizationModel}
+
+import scala.io.Source
 
 /**
   * 使用sparkML实现电影推荐系统

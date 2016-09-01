@@ -1,8 +1,8 @@
-package com.ch.ml
+package com.ch.ml.movieRecommend
 
 import java.util.Random
 
-import org.apache.log4j.{Logger, Level}
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.mllib.recommendation.{ALS, MatrixFactorizationModel, Rating}
 import org.apache.spark.rdd._
 import org.apache.spark.{SparkConf, SparkContext}
