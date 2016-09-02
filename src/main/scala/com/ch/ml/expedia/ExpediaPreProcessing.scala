@@ -24,10 +24,10 @@ object ExpediaPreProcessing {
     ,"file:///I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\test.csv"
     ,"train"
     ,"test")
-    val Array(trainPath, testPath, trainOutPath, testOutPath) = args1
+    val Array(trainPath, testPath, trainOutPath, testOutPath) = args
 
     // 设置参数
-    val conf = new SparkConf().setAppName("expedia").setMaster("local[2]")
+    val conf = new SparkConf()/*.setAppName("expedia").setMaster("local[2]")*/
     val sc = new SparkContext(conf)
 
     //修改train数据 / test
@@ -35,8 +35,8 @@ object ExpediaPreProcessing {
     val data_test = sc.textFile(testPath)
 
     // 数据预处理 并存文件
-    dataPreProcessing(data_train,"train").saveAsTextFile(trainOutPath)
-    dataPreProcessing(data_test,"test").saveAsTextFile(testOutPath)
+    dataPreProcessing(data_train,"train").coalesce(1,true).saveAsTextFile(trainOutPath)
+    dataPreProcessing(data_test,"test").coalesce(1,true).saveAsTextFile(testOutPath)
 
     sc.stop()
   }
@@ -59,18 +59,25 @@ object ExpediaPreProcessing {
         x2.toArray
     }
 
-    //转换为libsvm格式: lable k1:v1 k2:v2
+    //转换为libsvm格式: label k1:v1 k2:v2
     val dataLibsvm = data5date.map {
       x =>
         val a = new ArrayBuffer[String]
+
+        if(fileType.equals("train")){ // 把是否预定当做label
         a += x.last
+        }else{ // test集没有 booking_bool列，虽然libsvm label可以为空，但spark处理 libsvm数据要有label列,所以test集都设置label为1
+        a += "1"
+        }
         // 正常这里是1，但是train和test数据集的列数不一样，train比test多了后三列，为了predit时正确，就把train数据集后三列删除
         var clnNum = 1
         if (fileType.equals("train")) {
           clnNum = 4
         }
         for (i <- 0 to x.length - clnNum) {
-          a += i + ":" + x(i)
+          // 为了防止index出现-1等非法数据，这里对index统一+2
+          // libsvm 数据的index貌似不能以0 开始
+          a += (i+2) + ":" + x(i)
         }
         a.toArray.mkString(" ")
     }
