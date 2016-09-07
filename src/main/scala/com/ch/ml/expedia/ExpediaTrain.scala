@@ -1,7 +1,7 @@
 package com.ch.ml.expedia
 
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.mllib.classification.{LogisticRegressionWithSGD, LogisticRegressionWithLBFGS}
+import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithSGD, LogisticRegressionWithLBFGS}
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.tree.GradientBoostedTrees
 import org.apache.spark.mllib.tree.configuration.BoostingStrategy
@@ -28,14 +28,20 @@ object ExpediaTrain {
       , "file:///home/hive/bj/ch/expedia/test/part-*"
       , "file:///home/hive/bj/ch/expedia/"
     )
-    val Array(trainPath, testPath, outputPath, flag) = args
+val args2 = Array("K:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\expedia_ml\\part-00000"
+  , "K:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\expedia_ml_test\\part-00000"
+  , "K:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\expedia_train_out"
+  ,"1"
+)
+
+    val Array(trainPath, testPath, outputPath, flag) = args2
 
     // 设置参数
-    val conf = new SparkConf() /*.setAppName("expediaTrain").setMaster("local[2]")*/
+    val conf = new SparkConf() .setAppName("expediaTrain").setMaster("local[2]")
     val sc = new SparkContext(conf)
 
 
-    val trainData = MLUtils.loadLibSVMFile(sc, trainPath)
+    val trainData = MLUtils.loadLibSVMFile(sc,trainPath)
     val testData = MLUtils.loadLibSVMFile(sc, testPath)
     // train数据3 7 分
     //    val splits = data.randomSplit(Array(0.7, 0.3))
@@ -63,7 +69,11 @@ object ExpediaTrain {
           score.toFloat + "," + point.label.toInt + "," + point.features(1).toInt + "," + point.features(7).toInt
       }.coalesce(1, true).saveAsTextFile("LR1" + outputPath)
 
+      // 把模型保存下来之后，可以进行加载使用
       lrModel.save(sc, "LR1-model" + outputPath)
+
+      // 可以读
+      val savedLRModel = LogisticRegressionModel.load(sc,"lrModel_path")
     } else if (flag.equals("2")) {
       //lr2
       val lrModel2 = new LogisticRegressionWithSGD().run(sampleData)
