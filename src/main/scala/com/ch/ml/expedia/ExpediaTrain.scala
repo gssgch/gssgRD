@@ -24,20 +24,28 @@ object ExpediaTrain {
       println("Usage:ExpediaTrain <trainPath> <testPath> <outputPath>")
       //      System.exit(0)
     }
-    val args1 = Array("file:///home/hive/bj/ch/expedia/train/part-*"
-      , "file:///home/hive/bj/ch/expedia/test/part-*"
-      , "file:///home/hive/bj/ch/expedia/"
+    val args1 = Array("file:///home/hive/bj/ch/expedia/expedia_ml/part-00000"
+      , "file:///home/hive/bj/ch/expedia/expedia_ml_test/part-00000"
+      , "file:///home/hive/bj/ch/expedia/expedia_out"
+      , "file:///home/hive/bj/ch/expedia/expedia_out_model"
+      , "1"
     )
-val args2 = Array("K:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\expedia_ml\\part-00000"
-  , "K:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\expedia_ml_test\\part-00000"
-  , "K:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\expedia_train_out"
+val args2 = Array("i:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\xxdata\\expedia_ml\\part-00000"
+  , "i:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\xxdata\\expedia_ml_test\\part-00000"
+  , "i:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\expedia_train_out"
   ,"1"
 )
 
-    val Array(trainPath, testPath, outputPath, flag) = args2
+    val args3 = Array("/user/s-56/expedia_ml/part-00000"
+      , "/user/s-56/expedia_ml/part-00000"
+      , "/user/s-13/expedia_train_out"
+      , "/user/s-13/expedia_train_out_model"
+      ,"1"
+    )
+    val Array(trainPath, testPath, outputPath,outputPathModel, flag) = args3
 
     // 设置参数
-    val conf = new SparkConf() .setAppName("expediaTrain").setMaster("local[2]")
+    val conf = new SparkConf()/* .setAppName("expediaTrain").setMaster("local[2]")*/
     val sc = new SparkContext(conf)
 
 
@@ -50,15 +58,14 @@ val args2 = Array("K:\\chinahadoop\\机器学习训练营\\训练营作业&代�
     // 把LablePoint数据转换为分层抽样支持的K-V数据
     val preData = trainData.map(x => (x.label, x.features))
     // 对数据进行分层抽样  每一层都抽取0.8
-    val fractions = preData.map(_._1).distinct.map(x => (x, 0.8)).collectAsMap
+    val fractions = preData.map(_._1).distinct.map(x => (x, 0.6)).collectAsMap
     // withReplacement = false 表示不重复抽样
-    val sampleData = preData.sampleByKey(withReplacement = false, fractions, seed = 101L).map(x => LabeledPoint(x._1, x._2))/*.cache()*/
+    val sampleData = preData.sampleByKey(withReplacement = false, fractions, seed = 51L).map(x => LabeledPoint(x._1, x._2)).cache()
     //    val fractions: Map[Int, Double] = (List((1, 0.2), (2, 0.8))).toMap //表示在层1抽0.2，在层2中抽0.8
-
     if (flag.equals("1")) {
       // lr1
       // 训练 LR 模型
-      val lrModel = new LogisticRegressionWithLBFGS().run(sampleData)
+      val lrModel = new LogisticRegressionWithLBFGS().setNumClasses(20).run(sampleData)
       // clear the default threshold
       lrModel.clearThreshold()
 
@@ -66,14 +73,17 @@ val args2 = Array("K:\\chinahadoop\\机器学习训练营\\训练营作业&代�
       val testErr = testData.map {
         point =>
           val score = lrModel.predict(point.features)
+          // prob label search hotel
           score.toFloat + "," + point.label.toInt + "," + point.features(1).toInt + "," + point.features(7).toInt
-      }.coalesce(1, true).saveAsTextFile("LR1" + outputPath)
+//      }.coalesce(1, true).saveAsTextFile("LR1" + outputPath)
+      }.coalesce(1, true).saveAsTextFile(outputPath)
 
       // 把模型保存下来之后，可以进行加载使用
-      lrModel.save(sc, "LR1-model" + outputPath)
+//      lrModel.save(sc, "LR1-model" + outputPath)
+      lrModel.save(sc,outputPathModel)
 
       // 可以读
-      val savedLRModel = LogisticRegressionModel.load(sc,"lrModel_path")
+//      val savedLRModel = LogisticRegressionModel.load(sc,"lrModel_path")
     } else if (flag.equals("2")) {
       //lr2
       val lrModel2 = new LogisticRegressionWithSGD().run(sampleData)
@@ -82,7 +92,7 @@ val args2 = Array("K:\\chinahadoop\\机器学习训练营\\训练营作业&代�
       // LR model 2
       testData.map {
         point =>
-          val score = lrModel2.predict(point.features)
+          val score = lrModel2.predict(point.features) //prob label search hotel
           score.toFloat + "," + point.label.toInt + "," + point.features(1).toInt + "," + point.features(7).toInt
       }.coalesce(1, true).saveAsTextFile("LR2" + outputPath)
 
