@@ -7,6 +7,7 @@ import scala.collection.mutable.ArrayBuffer
 
 /**
   * Created by ch on 2016/8/25.
+  * expedia 酒店预测  数据预处理
   */
 object ExpediaPreProcessing {
 
@@ -16,7 +17,7 @@ object ExpediaPreProcessing {
     Logger.getLogger("org.eclipse.jetty.server").setLevel(Level.OFF)
 
     if (args.length != 4) {
-      println("Usage:ExpediaTrain <trainPath> <testPath> <trainOutPath> <testOutPath>")
+      println("Usage:ExpediaTrain <trainPath> <testPath> <processTrainOut> <processTestOut>")
 //      System.exit(0)
     }
 
@@ -24,7 +25,7 @@ object ExpediaPreProcessing {
     ,"file:///I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\test.csv"
     ,"train"
     ,"test")
-    val Array(trainPath, testPath, trainOutPath, testOutPath) = args
+    val Array(trainPath, testPath, processTrainOut, processTestOut) = args
 
     // 设置参数
     val conf = new SparkConf()/*.setAppName("expedia").setMaster("local[2]")*/
@@ -35,8 +36,8 @@ object ExpediaPreProcessing {
     val data_test = sc.textFile(testPath)
 
     // 数据预处理 并存文件
-    dataPreProcessing(data_train,"train").coalesce(1,true).saveAsTextFile(trainOutPath)
-    dataPreProcessing(data_test,"test").coalesce(1,true).saveAsTextFile(testOutPath)
+    dataPreProcessing(data_train,"train").coalesce(1,true).saveAsTextFile(processTrainOut)
+    dataPreProcessing(data_test,"test").coalesce(1,true).saveAsTextFile(processTestOut)
 
     sc.stop()
   }
@@ -47,7 +48,7 @@ object ExpediaPreProcessing {
     * @param fileType ""
     */
   def dataPreProcessing(rdd: RDD[String], fileType: String) = {
-    //    数据处理
+    //    数据处理 去除null值
     val dataRDD = rdd.filter(!_.contains("srch_id")).map {
       _.replace("NULL", "0").split(",")
     }

@@ -1,26 +1,26 @@
 package com.ch.ml.expedia
 
-import org.apache.spark.sql.SQLContext
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.sql.Row
+import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.sql.types._
+import org.apache.spark.{SparkConf, SparkContext}
 
 /**
   * Created by ch on 2016/8/31.
   * 使用spark SQL 进行排序
   * expedia 预测结果数据排序，按label分组，按预测值高低排序
+  * 仅仅用于本地测试，可删除
   */
-object ExpediaSql {
+object ExpediaSql_localTest {
 
   def main(args: Array[String]) {
     if (args.length != 2) {
       println("Usage:ExpediaTrain <trainPath> <outPath>")
-      System.exit(0)
+//      System.exit(0)
     }
-    val Array(trainPath, outPath) = args
-    //    val trainPath="I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\xxdata\\output\\part-00000"
+//    val Array(trainPath, outPath) = args
+        val trainPath="I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\xxdata\\output\\part-00000"
     val conf = new SparkConf()
-    /*.setAppName("sqlTest").setMaster("local[2]")*/
+    .setAppName("sqlTest").setMaster("local[2]")
     val sc = new SparkContext(conf)
     val reRDD = sc.textFile(trainPath) //part-00000.log
     val schemaString = "prob label search hotel"
@@ -34,10 +34,13 @@ object ExpediaSql {
     rmDF.groupBy()
 
     val results = sqlContext.sql("SELECT prob,label,search,hotel FROM expdeia order By search asc,prob desc")
-    results.map {
-      v =>
-        v.get(2) + "," + v.get(3)
-    }.coalesce(1)
-      .saveAsTextFile(outPath)
+    for (row<- results) {
+      println(row.get(0) + "," + row.get(1) + "," + row.get(2)+","+row.get(3))
+    }
+//    results.map {
+//      v =>
+//        v.get(2) + "," + v.get(3)
+//    }.coalesce(1)
+//      .saveAsTextFile(outPath)
   }
 }
