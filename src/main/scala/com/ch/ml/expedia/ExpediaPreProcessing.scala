@@ -18,7 +18,7 @@ object ExpediaPreProcessing {
 
     if (args.length != 4) {
       println("Usage:ExpediaTrain <trainPath> <testPath> <processTrainOut> <processTestOut>")
-//      System.exit(0)
+      System.exit(0)
     }
 
     val args1=Array("file:///I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\train.csv"

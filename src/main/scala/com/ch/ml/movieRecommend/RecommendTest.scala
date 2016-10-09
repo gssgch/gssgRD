@@ -43,12 +43,18 @@ object RecommendTest {
     val titles = movies.map(line => line.split("::").take(2)).map(array => (array(0).toInt, array(1))).collectAsMap()
     titles(123)
 
+    val user = 798
     //keyBy创建键值对RDD，lookup只返回给定键值
-    val moviesForUser = ratings.keyBy(_.user).lookup(789)
+    val moviesForUser = ratings.keyBy(_.user).lookup(user)
     println("该用户评价过多少电影:"+moviesForUser.size) //该用户评价过多少电影
     //查看789用户评价最高的10部电影
-    moviesForUser.sortBy(-_.rating).take(10).map(rating => (titles(rating.product),rating.rating)).foreach(println)
+//    moviesForUser.sortBy(-_.rating).take(10).map(rating => (titles(rating.product),rating.rating)).foreach(println)
+//    moviesForUser.sortBy(-_.rating).take(10).map(rating => (user,rating.product,titles(rating.product),rating.rating)).foreach(println)
+    // 查看798用户的所有电影评分
+    printf("\n查看用户 "+user+" 的所有电影评分：\n")
+    moviesForUser.sortBy(-_.rating).map(rating => (user,rating.product,rating.rating)).foreach(println)
     //查看给789用户推荐的前10部电影
+    printf("\n给用户 "+user+" 推荐的前10部电影如下：\n")
     topKRecs.map(rating => (titles(rating.product), rating.rating)).foreach(println)
  }
 }

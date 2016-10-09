@@ -23,19 +23,23 @@ object MovieRecommend {
 
     if (args.length != 2) {
       println("Usage: /path/to/spark/bin/spark-submit --driver-memory 2g --class week7.MovieLensALS " + "week7.jar movieLensHomeDir personalRatingsFile")
-      sys.exit(1)
+//      sys.exit(1)
     }
 
+//    val  Array(path,perRatingFile)=args
+    val path = "I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\sparkML电影推荐作业\\ml-1m/"
+    val perRatingFile= "I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\sparkML电影推荐作业\\ml-1m/users.dat"
+//    val perRatingFile= "I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\sparkML电影推荐作业\\ml-1m/personRating.txt"
     // 设置参数
     val conf = new SparkConf().setAppName("MovieLensALS").setMaster("local[2]")
     val sc = new SparkContext(conf)
 
     // Load用户评分， loadRatings函数在后面给出了实现
-    val myRatings = loadRatings(args(1))
+    val myRatings = loadRatings(perRatingFile)
     val myRatingsRDD = sc.parallelize(myRatings, 1)
 
     // 下载的样本数据所在目录
-    val movieLensHomeDir = args(0)
+    val movieLensHomeDir = path
 
     // Load样本评分数据，将其中最后一列Timestamp除10取其余数为key，Rating为值,即(Int,Rating)
     val ratings = sc.textFile(new File(movieLensHomeDir, "ratings.dat").toString).map { line =>

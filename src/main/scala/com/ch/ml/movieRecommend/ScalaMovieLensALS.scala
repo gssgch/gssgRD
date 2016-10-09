@@ -26,21 +26,25 @@ object ScalaMovieLensALS {
     if (args.length != 2) {
       println("Usage: /path/to/spark/bin/spark-submit --driver-memory 2g --class com.javachen.spark.examples.mllib.ScalaMovieLensALS " +
         "target/scala-*/movielens-als-ssembly-*.jar movieLensHomeDir personalRatingsFile")
-//      sys.exit(1)
+      //      sys.exit(1)
     }
+//    val Array(path, perRatingFile) = args
+    val path = "I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\sparkML电影推荐作业\\ml-1m/"
+    val perRatingFile= "I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\sparkML电影推荐作业\\ml-1m/personRating.txt"
+
 
     // set up environment
     val conf = new SparkConf().setAppName("ScalaMovieLensALS").setMaster("local[2]")
     val sc = new SparkContext(conf)
 
     // load ratings and movie titles
-    val ratings = sc.textFile(args(0) + "/ratings.dat").map { line =>
+    val ratings = sc.textFile(path + "/ratings.dat").map { line =>
       val fields = line.split("::")
       // format: (timestamp % 10, Rating(userId, movieId, rating))
       (fields(3).toLong % 10, Rating(fields(0).toInt, fields(1).toInt, fields(2).toDouble))
     }
 
-    val movies = sc.textFile(args(0) + "/movies.dat").map { line =>
+    val movies = sc.textFile(path + "/movies.dat").map { line =>
       val fields = line.split("::")
       // format: (movieId, movieName)
       (fields(0).toInt, fields(1))
@@ -91,7 +95,7 @@ object ScalaMovieLensALS {
     Rating(0,1193,5.0)
     Rating(0,1127,4.0)
 */
-      printf("\n---begin---")
+    printf("\n---begin---")
     myRatings.foreach(println)
     printf("\n---end---")
     //convert received ratings to RDD[Rating], now this can be worked in parallel
