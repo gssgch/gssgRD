@@ -19,7 +19,6 @@ object KWordsAnalyse {
 
     //    val masterId = "local[2]"
     //    val inputLogBase = "F:\\company\\lomark\\平台数据&自动化脚本\\原始数据parquet文件\\2016-10-01_00_p1_invalid.1475254927494.log.20161001012611215.parquet"
-    //                val inputLogBase = "F:\\company\\lomark\\DMP-new\\点击率预测数据min"
     //    val outputPath = "F:\\output\\"
     //    val pars = "3"
 
