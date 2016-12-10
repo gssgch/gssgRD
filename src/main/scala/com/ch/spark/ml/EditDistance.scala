@@ -1,4 +1,4 @@
-package com.ch.ml
+package com.ch.spark.ml
 
 /**
   * Created by ch on 2016/8/25.

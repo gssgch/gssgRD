@@ -1,4 +1,4 @@
-package com.ch.ml.expedia
+package com.ch.spark.ml.expedia
 
 import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.sql.types._

@@ -1,4 +1,4 @@
-package com.ch.ml.ctr
+package com.ch.spark.ml.ctr
 
 import org.apache.spark.sql.Row
 

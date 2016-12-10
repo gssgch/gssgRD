@@ -1,4 +1,4 @@
-package com.ch.ml.movieRecommend
+package com.ch.spark.ml.movieRecommend
 
 
 /**

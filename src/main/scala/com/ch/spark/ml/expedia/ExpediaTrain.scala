@@ -1,4 +1,4 @@
-package com.ch.ml.expedia
+package com.ch.spark.ml.expedia
 
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithSGD, LogisticRegressionWithLBFGS}

@@ -1,4 +1,4 @@
-package com.ch.ml.ctr
+package com.ch.spark.ml.ctr
 
 import org.apache.spark.ml.feature._
 import org.apache.spark.mllib.feature.IDF
@@ -67,7 +67,7 @@ object Convert {
         (1, "张说三3 李是四3 王去五3")
 
     )).toDF("label", "sentence")
-
+/*
     val tokenizer = new Tokenizer().setInputCol("sentence").setOutputCol("words")
     val wordsData = tokenizer.transform(sentenceData)
     val hashingTF = new HashingTF()
@@ -81,7 +81,7 @@ object Convert {
     rescaledData.select("label", "features").map {
       case Row(label: String, features: Vector) =>
         LabeledPoint(label.toDouble, Vectors.dense(features.toArray))
-    }.foreach(println)
+    }.foreach(println)*/
 
 
     /*val df = sqlc.createDataFrame(Seq(

@@ -1,4 +1,4 @@
-package com.ch.ml.ctr
+package com.ch.spark.ml.ctr
 
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
