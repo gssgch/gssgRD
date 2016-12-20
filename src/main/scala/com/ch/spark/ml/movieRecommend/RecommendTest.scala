@@ -15,8 +15,8 @@ object RecommendTest {
         .setAppName("MovieLensRecommend")
     val sc = new SparkContext(conf)
 
-    val file="I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\sparkML电影推荐作业\\ml-1m/ratings.dat"
-    val file2="I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\sparkML电影推荐作业\\ml-1m/movies.dat"
+    val file="K:\\MLearning\\training\\code\\sparkMLMovieRecommend\\ml-1m/ratings.dat"
+    val file2="K:\\MLearning\\training\\code\\sparkMLMovieRecommend\\ml-1m/movies.dat"
     /**提取特征(影片 ID 星级 事件戳)*/
     val rawData = sc.textFile(file)
 

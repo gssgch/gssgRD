@@ -29,8 +29,8 @@ object ScalaMovieLensALS {
       //      sys.exit(1)
     }
 //    val Array(path, perRatingFile) = args
-    val path = "I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\sparkML电影推荐作业\\ml-1m/"
-    val perRatingFile= "I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\sparkML电影推荐作业\\ml-1m/personRating.txt"
+    val path = "K:\\MLearning\\training\\code\\sparkMLMovieRecommend\\ml-1m/"
+    val perRatingFile= "K:\\MLearning\\training\\code\\sparkMLMovieRecommend\\ml-1m/personRating.txt"
 
 
     // set up environment

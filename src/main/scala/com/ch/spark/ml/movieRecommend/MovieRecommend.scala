@@ -11,7 +11,7 @@ import scala.io.Source
 
 /**
   * 使用sparkML实现电影推荐系统
-  * 小象参考答案
+  * 参考
   * Created by ch on 2016/8/25.
   */
 object MovieRecommend {
@@ -27,9 +27,9 @@ object MovieRecommend {
     }
 
 //    val  Array(path,perRatingFile)=args
-    val path = "I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\sparkML电影推荐作业\\ml-1m/"
-    val perRatingFile= "I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\sparkML电影推荐作业\\ml-1m/users.dat"
-//    val perRatingFile= "I:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\sparkML电影推荐作业\\ml-1m/personRating.txt"
+    val path = "K:\\MLearning\\training\\code\\sparkMLMovieRecommend\\ml-1m/"
+    val perRatingFile= "K:\\MLearning\\training\\code\\sparkMLMovieRecommend\\ml-1m/users.dat"
+//    val perRatingFile= "K:\MLearning\training\code\sparkMLMovieRecommend\\ml-1m/personRating.txt"
     // 设置参数
     val conf = new SparkConf().setAppName("MovieLensALS").setMaster("local[2]")
     val sc = new SparkContext(conf)
