@@ -1,10 +1,13 @@
 package com.ch.spark.ml.expedia
 
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithSGD, LogisticRegressionWithLBFGS}
+import org.apache.spark.mllib.classification.NaiveBayes
+import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS, LogisticRegressionWithSGD, SVMWithSGD}
+import org.apache.spark.mllib.evaluation.BinaryClassificationMetrics
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.tree.GradientBoostedTrees
-import org.apache.spark.mllib.tree.configuration.BoostingStrategy
+import org.apache.spark.mllib.tree.{DecisionTree, GradientBoostedTrees}
+import org.apache.spark.mllib.tree.configuration.{Algo, BoostingStrategy}
+import org.apache.spark.mllib.tree.impurity.Entropy
 import org.apache.spark.mllib.util.MLUtils
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -21,7 +24,7 @@ object ExpediaTrain {
 
     if (args.length != 5) {
       println("Usage:ExpediaTrain <trainPath> <testPath> <trainOutput> <modelPath> <flag>")
-            System.exit(0)
+      System.exit(0)
     }
     val args1 = Array("file:///home/hive/bj/ch/expedia/expedia_ml/part-00000"
       , "file:///home/hive/bj/ch/expedia/expedia_ml_test/part-00000"
@@ -29,24 +32,24 @@ object ExpediaTrain {
       , "file:///home/hive/bj/ch/expedia/expedia_out_model"
       , "1"
     )
-val args2 = Array("i:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\xxdata\\expedia_ml\\part-00000"
-  , "i:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\xxdata\\expedia_ml_test\\part-00000"
-  , "i:\\chinahadoop\\机器学习训练营\\训练营作业&代码\\3，推荐系统项目\\expedia_train_out"
-  ,"1"
-)
+    val args2 = Array("xxdata\\expedia_ml\\part-00000"
+      , "xxdata\\expedia_ml_test\\part-00000"
+      , "expedia_train_out"
+      , "1"
+    )
 
     val args3 = Array("/user/s-56/expedia_ml/part-00000"
       , "/user/s-56/expedia_ml_test/part-00000"
       , "/user/s-13/expedia_train_out2"
       , "/user/s-13/expedia_train_out_model2"
-      ,"1"
+      , "1"
     )
-    val Array(trainPath, testPath, trainOutput,modelPath, flag) = args
+    val Array(trainPath, testPath, trainOutput, modelPath, flag) = args
 
-    val conf = new SparkConf()/* .setAppName("expediaTrain").setMaster("local[2]")*/
+    val conf = new SparkConf() /* .setAppName("expediaTrain").setMaster("local[2]")*/
     val sc = new SparkContext(conf)
 
-    val trainData = MLUtils.loadLibSVMFile(sc,trainPath)
+    val trainData = MLUtils.loadLibSVMFile(sc, trainPath)
     val testData = MLUtils.loadLibSVMFile(sc, testPath)
     // train数据3 7 分
     //    val splits = data.randomSplit(Array(0.7, 0.3))
@@ -55,7 +58,7 @@ val args2 = Array("i:\\chinahadoop\\机器学习训练营\\训练营作业&代�
     // 把LablePoint数据转换为分层抽样支持的K-V数据
     val preData = trainData.map(x => (x.label, x.features))
     // 对数据进行分层抽样  每一层都抽取0.8
-//    val fractions = preData.map(_._1).distinct.map(x => (x, 0.8)).collectAsMap
+    //    val fractions = preData.map(_._1).distinct.map(x => (x, 0.8)).collectAsMap
     val fractions = preData.map(_._1).distinct.map(x => (x, 0.8)).collectAsMap
     // 改造一下，正样本多留点，负样本少取点
     /*val fractions = preData.map(_._1).distinct.map{
@@ -67,6 +70,10 @@ val args2 = Array("i:\\chinahadoop\\机器学习训练营\\训练营作业&代�
            case _ => (label,0.7D)
         }
     }.collectAsMap*/
+
+    val numInterations = 10
+    val maxTreeDeepth = 5
+
     // withReplacement = false 表示不重复抽样
     val sampleData = preData.sampleByKey(withReplacement = false, fractions, seed = 111L).map(x => LabeledPoint(x._1, x._2)).cache()
     //    val fractions: Map[Int, Double] = (List((1, 0.2), (2, 0.8))).toMap //表示在层1抽0.2，在层2中抽0.8
@@ -74,9 +81,9 @@ val args2 = Array("i:\\chinahadoop\\机器学习训练营\\训练营作业&代�
       // lr1
       // 训练 LR 模型
       val lrModel = new LogisticRegressionWithLBFGS()
-//        .setNumClasses(20)
+        //        .setNumClasses(20)
         .run(sampleData)
-      lrModel.save(sc,modelPath)
+      lrModel.save(sc, modelPath)
       // clear the default threshold
       lrModel.clearThreshold()
 
@@ -89,14 +96,15 @@ val args2 = Array("i:\\chinahadoop\\机器学习训练营\\训练营作业&代�
       }.coalesce(1, true).saveAsTextFile(trainOutput)
 
       // 把模型保存下来之后，可以进行加载使用
-//      lrModel.save(sc, "LR1-model" + outputPath)
+      //      lrModel.save(sc, "LR1-model" + outputPath)
 
 
       // 可以读
-//      val savedLRModel = LogisticRegressionModel.load(sc,"lrModel_path")
+      //      val savedLRModel = LogisticRegressionModel.load(sc,"lrModel_path")
     } else if (flag.equals("2")) {
       //lr2
-      val lrModel2 = new LogisticRegressionWithSGD().run(sampleData)
+//      val lrModel2 = new LogisticRegressionWithSGD().run(sampleData)
+            val lrModel2 = LogisticRegressionWithSGD.train(sampleData,numInterations)
       lrModel2.clearThreshold()
 
       // LR model 2
@@ -106,7 +114,53 @@ val args2 = Array("i:\\chinahadoop\\机器学习训练营\\训练营作业&代�
           score.toFloat + "," + point.label.toInt + "," + point.features(1).toInt + "," + point.features(7).toInt
       }.coalesce(1, true).saveAsTextFile(trainOutput)
 
-//      lrModel2.save(sc,  modelPath)
+      /**
+        * 补充 20170119
+        * 各种分类算法
+        * spark 一样可以计算auc和正确率准确率
+        */
+
+      val svmModel = SVMWithSGD.train(sampleData,numInterations)
+      val nbModel = NaiveBayes.train(sampleData,numInterations)
+      val dtModel =DecisionTree.train(sampleData, Algo.Classification,Entropy,maxTreeDeepth)
+      Seq(lrModel2,svmModel).map {
+        // lr模型和svm模型可以这样计算
+        model =>
+          val scoreAndLabels = sampleData.map {
+            point => (model.predict(point.features), point.label)
+
+          }
+          val metrics = new BinaryClassificationMetrics(scoreAndLabels)
+          (model.getClass.getSimpleName, metrics.areaUnderPR(), metrics.areaUnderROC())
+      }
+
+      /** 贝叶斯模型 */
+      val nbMetrics = Seq(nbModel).map {
+        model =>
+          val scoreAndLabels = sampleData.map {
+            point =>
+              val score = model.predict(point.features)
+              (if (score > 0.5) 1.0 else 0.0, point.label)
+          }
+          val metrics = new BinaryClassificationMetrics(scoreAndLabels)
+          (model.getClass.getSimpleName, metrics.areaUnderPR(), metrics.areaUnderROC())
+      }
+
+      /** 决策树模型 */
+      val dtMetrics = Seq(dtModel).map {
+        model =>
+          val scoreAndLabels = sampleData.map {
+            point =>
+              val score = model.predict(point.features)
+              (if (score > 0.5) 1.0 else 0.0, point.label)
+          }
+          val metrics = new BinaryClassificationMetrics(scoreAndLabels)
+          (model.getClass.getSimpleName, metrics.areaUnderPR(), metrics.areaUnderROC())
+      }
+
+
+
+      //      lrModel2.save(sc,  modelPath)
 
     } else if (flag.equals("3")) {
       // gbdt
@@ -121,9 +175,8 @@ val args2 = Array("i:\\chinahadoop\\机器学习训练营\\训练营作业&代�
           score.toFloat + "," + point.label.toInt + "," + point.features(1).toInt + "," + point.features(7).toInt
       }.coalesce(1, true).saveAsTextFile(trainOutput)
 
-//      GBDTModel.save(sc, modelPath)
+      //      GBDTModel.save(sc, modelPath)
     }
-
 
 
 

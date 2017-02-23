@@ -54,13 +54,6 @@ object KWordsAnalyse {
         }
     }
       .filter(_ != null)
-      /*      .map{
-               log=>
-                 (log.adorderid,log.keywords,log.requestmode,log.iseffective)
-             }
-             .saveAsTextFile(outputPath)
-             */
-
 
       //    adorderid, keywords, imp, click, ctr
       .flatMap {
@@ -74,17 +67,6 @@ object KWordsAnalyse {
             (ad, key, imp, click)
         }
     }
-
-
-      // 使用测试数据使用的:
-      /*      sc.textFile(inputLogBase).repartition(pars.toInt).map(x => x.split(",", x.length)).flatMap {
-              log =>
-                log(1).trim.split("\\|").map {
-                  key =>
-                    (log(0), key, log(2), log(3))
-                }
-            }*/
-
       .groupBy { case (ad, key, _, _) => ad + "_" + key }.map {
       case (k, v) =>
         val imp = v.map { case (_, _, imp, _) => imp.toInt }.sum

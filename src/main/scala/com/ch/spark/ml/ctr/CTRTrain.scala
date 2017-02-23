@@ -79,34 +79,25 @@ object CTRTrain {
         LabeledPoint(key.toInt, Vectors.dense(features))
     }
 
-
-    // 把LablePoint数据转换为分层抽样支持的K-V数据
-    val preData = trainLabelData.map(x => (x.label, x.features))
-    // 对数据进行分层抽样  每一层都抽取0.8
-    val fractions = preData.map(_._1).distinct.map(x => (x, 0.8)).collectAsMap
-
-    // withReplacement = false 表示不重复抽样
-    val sampleData = preData.sampleByKey(withReplacement = false, fractions, seed = 111L).map(x => LabeledPoint(x._1, x._2)).cache()
-    //    val fractions: Map[Int, Double] = (List((1, 0.2), (2, 0.8))).toMap //表示在层1抽0.2，在层2中抽0.8
     // 训练 LR 模型
-    /*val lrModel = new LogisticRegressionWithLBFGS()
-      //        .setNumClasses(20)
-      .run(sampleData)
-    lrModel.save(sc, modelPath)
+    val lrModel = new LogisticRegressionWithLBFGS()
+              .setNumClasses(15)
+      .run(trainLabelData)
+//    lrModel.save(sc, modelPath)
     // clear the default threshold
     lrModel.clearThreshold()
 // 加载模型
-//      lrModel.save(sc, "LR1-model" + outputPath)*/
+//      lrModel.save(sc, "LR1-model" + outputPath)
 
     // 训练 GBTs
-    val boostingStrategy = BoostingStrategy.defaultParams("Classification")
+    /*val boostingStrategy = BoostingStrategy.defaultParams("Classification")
     boostingStrategy.numIterations = 100
     boostingStrategy.treeStrategy.numClasses = 2
     boostingStrategy.treeStrategy.maxDepth = 10
     boostingStrategy.treeStrategy.categoricalFeaturesInfo = Map[Int, Int]()
 
 
-    val model = GradientBoostedTrees.train(sampleData, boostingStrategy)
+    val model = GradientBoostedTrees.train(sampleData, boostingStrategy)*/
 
 
     val testLabelData = testRawData.map {
@@ -140,14 +131,21 @@ object CTRTrain {
     }
 
 
-    val lableAndPredict = testLabelData.map { point =>
-      val prediction = model.predict(point.features)
-      (point.label, prediction)
+    val lableAndPredict = testLabelData.map {
+      case LabeledPoint(label,features)=>
+      val prediction = lrModel.predict(features)
+      (prediction,label)
     }
-//    val predictAndLable = predictions.zip(testLabelData.map(_.label)) // (pre lable,true lable)
+
+    // Get evaluation metrics.
+    val metrics = new MulticlassMetrics(lableAndPredict)
+    val accuracy = metrics.precision
+    println(s"------------Accuracy = $accuracy")
+
+/*
+      // GBT 预测效果
 
     val testErr = lableAndPredict.filter(x => x._1 != x._2).count().toDouble / testLabelData.count()
-
-    println("LR accuracy " + testErr)
+    println("LR accuracy " + testErr)*/
   }
 }

@@ -45,21 +45,22 @@ object PreProcessing {
     val sc = new SparkContext(conf)
     val sqlc = new SQLContext(sc)
     sqlc.setConf("spark.sql.parquet.compression.codec", "snappy")
-    val data = sqlc.read.parquet(inputLogBase).repartition(pars.toInt)
-      .map(a =>
-        CTRBean.buidFormParquet(a)
-      )
-      .filter { log => log.adorderid > 0 && (log.requestmode == 1 || log.requestmode == 3) }
 
+    val data = sqlc.read.parquet(inputLogBase)
+      .coalesce(pars.toInt) // repartition
+      .map(a =>
+      CTRBean.buidFormParquet(a)
+    )
+      .filter { log => log.adorderid > 0 && (log.requestmode == 2 || log.requestmode == 3) }
       .groupBy { case k => k.sessionid }.map {
       x =>
-        val reqBean = x._2.find(_.requestmode == 1)
+        val reqBean = x._2.find(_.requestmode == 2)
         val clkBean = x._2.find { log => log.requestmode == 3 && log.iseffective == 1 }
         if (!clkBean.isEmpty && !reqBean.isEmpty) {
           reqBean.get.requestmode = clkBean.get.requestmode // click
           reqBean.get.sessionid = "1" // label  click
           reqBean.get.toString
-        } else if (!reqBean.isEmpty) {
+        } else if (!reqBean.isEmpty /*&& math.random>0.7*/ ) {
           reqBean.get.sessionid = "0"
           //          println("xxxx===",reqBean.get.sdkversionnumber,reqBean.get.adplatformkey,reqBean.get.title,reqBean.get.keywords)
           reqBean.get.toString
@@ -73,7 +74,7 @@ object PreProcessing {
      // 还可以使用reduceBykey 数据格式还是有点问题
     .map(x => (x.sessionid, x)).reduceByKey {
     (a, b) =>
-      val reqBean = if (a.requestmode == 1) a else b
+      val reqBean = if (a.requestmode == 2) a else b
       val clkBean = if (a.requestmode == 3 && a.iseffective == 1) a else if (b.requestmode == 3 && b.iseffective == 1) b
       if (clkBean.isInstanceOf[CTRBean]) {
         reqBean.requestmode = clkBean.asInstanceOf[CTRBean].requestmode // click
