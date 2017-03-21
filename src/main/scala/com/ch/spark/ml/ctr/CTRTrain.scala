@@ -1,5 +1,7 @@
 package com.ch.spark.ml.ctr
 
+import org.apache.spark.mllib.classification.LogisticRegressionWithLBFGS
+import org.apache.spark.mllib.evaluation.{BinaryClassificationMetrics, MulticlassMetrics}
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.tree.GradientBoostedTrees
@@ -138,9 +140,61 @@ object CTRTrain {
     }
 
     // Get evaluation metrics.
-    val metrics = new MulticlassMetrics(lableAndPredict)
-    val accuracy = metrics.precision
+    val metrics2 = new MulticlassMetrics(lableAndPredict)
+    val accuracy = metrics2.precision
     println(s"------------Accuracy = $accuracy")
+
+
+    /**
+      * 分类的效果评估
+      *
+      * 计算auc等 指标
+      */
+    // Instantiate metrics object
+    val metrics = new BinaryClassificationMetrics(lableAndPredict)
+
+    // Precision by threshold
+    val precision = metrics.precisionByThreshold
+    precision.foreach { case (t, p) =>
+      println(s"Threshold: $t, Precision: $p")
+    }
+
+    // Recall by threshold
+    val recall = metrics.recallByThreshold
+    recall.foreach { case (t, r) =>
+      println(s"Threshold: $t, Recall: $r")
+    }
+
+    // Precision-Recall Curve
+    val PRC = metrics.pr
+
+    // F-measure
+    val f1Score = metrics.fMeasureByThreshold
+    f1Score.foreach { case (t, f) =>
+      println(s"Threshold: $t, F-score: $f, Beta = 1")
+    }
+
+    val beta = 0.5
+    val fScore = metrics.fMeasureByThreshold(beta)
+    f1Score.foreach { case (t, f) =>
+      println(s"Threshold: $t, F-score: $f, Beta = 0.5")
+    }
+
+    // AUPRC
+    val auPRC = metrics.areaUnderPR
+    println("Area under precision-recall curve = " + auPRC)
+
+    // Compute thresholds used in ROC and PR curves
+    val thresholds = precision.map(_._1)
+
+    // ROC Curve
+    val roc = metrics.roc
+
+    // AUROC
+    val auROC = metrics.areaUnderROC
+    println("Area under ROC = " + auROC)
+
+    /**end*/
 
 /*
       // GBT 预测效果

@@ -25,7 +25,7 @@ object RecommendTest {
     val rawRatings = rawData.map(_.split("::").take(3))
     import org.apache.spark.mllib.recommendation.{ALS, Rating}
     val ratings = rawRatings.map { case Array(user, movie, rating) => Rating(user.toInt, movie.toInt, rating.toDouble) }
-    ratings.first()
+//    ratings.first()
 
     /** 训练推荐模型 */
     val rank = 50 //因子个数
@@ -44,7 +44,7 @@ object RecommendTest {
     val userID = 789
     val K = 10
     val topKRecs = model.recommendProducts(userID, K)
-    //    println(topKRecs.mkString("\n"))
+    println(topKRecs.mkString("\n"))
 
 
     /** 检验推荐内容 */
@@ -64,10 +64,13 @@ object RecommendTest {
       // 查看798用户的所有电影评分
       printf("\n查看用户 "+user+" 的所有电影评分：\n")
       moviesForUser.sortBy(-_.rating).map(rating => (user,rating.product,rating.rating)).foreach(println)
+   */
       //查看给789用户推荐的前10部电影
       printf("\n给用户 "+user+" 推荐的前10部电影如下：\n")
       topKRecs.map(rating => (titles(rating.product), rating.rating)).foreach(println)
-  */
+
+
+    sys.exit(0)
 
     /** 下面是物品推荐
       * 给定一个物品，有哪些物品与它最相似？

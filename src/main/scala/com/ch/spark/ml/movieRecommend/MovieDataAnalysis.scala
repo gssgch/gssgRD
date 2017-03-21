@@ -5,6 +5,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 /**
   * 电影数据分析
+  * spark 机器学习书
 
   */
 

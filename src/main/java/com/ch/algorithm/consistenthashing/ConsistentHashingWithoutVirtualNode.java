@@ -1,4 +1,4 @@
-package main.java.com.ch.algorithm;
+package main.java.com.ch.algorithm.consistenthashing;
 
 import java.util.SortedMap;
 import java.util.TreeMap;

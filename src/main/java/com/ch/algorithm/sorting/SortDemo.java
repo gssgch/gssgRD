@@ -1,4 +1,4 @@
-package main.java.com.ch.algorithm;
+package main.java.com.ch.algorithm.sorting;
 
 /**
  * Created by ch on 2016/12/20.
@@ -22,7 +22,7 @@ public class SortDemo {
 //        quickSort(arr, 0, arr.length-1);
 //        quickSort2(arr, 0, arr.length - 1);
 
-//        selectSort(arr,arr.length);
+        selectSort(arr,arr.length);
 //        selectSort2(arr, arr.length);
 
 //        InsertSort(arr, arr.length);
@@ -36,7 +36,7 @@ public class SortDemo {
 
 //        mergeSort(arr, 0, arr.length - 1);
 
-        lsdRadixSort(arr,0,arr.length-1,3);
+//        lsdRadixSort(arr,0,arr.length-1,3);
 
         System.out.println("\nafter sort-----:");
         printValue(arr);
