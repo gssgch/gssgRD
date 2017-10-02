@@ -1,4 +1,4 @@
-package com.ch.spark.graphx.useridentify
+package main.scala.com.ch.spark.graphx.useridentify
 
 import java.util.UUID
 
@@ -9,16 +9,11 @@ import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
-  * 不明白的一点：这里为什么导入的包需要main.scala
-  * 已经把scala目录设置为源，而且在pom文件中配置了
-  *
-  * 因为有两个目录，两种语言，不能把scala设置为源，直接把src设置为源目录
-  */
-/**
   * 统一用户识别
+  * 利用graphx 连通图实现统一用户识别
   * Created by  on 2016/12/5.
   */
-object UsersGraphx {
+object UsersGraphCC {
 
   def main(args: Array[String]): Unit = {
     // 设置日志级别
@@ -31,17 +26,6 @@ object UsersGraphx {
         """.stripMargin)
       //      sys.exit(0)
     }
-
-    //    var nums2:Set[Tuple2[Int,Int]] = Set((0, 0))
-    //    nums2 = nums2 ++ Set((1,2))
-    //    nums2 = nums2 ++ Set((2,2))
-    //    nums2 = nums2 ++ Set((1,2))
-    //    nums2 = nums2 ++ Set((1,2))
-    //    println("=="+nums2.size)
-    //    nums2.tail.foreach(println)
-    //    sys.exit(0)
-
-
 
     //    val Array(inputFiles, userShipOutputFiles, userResultOutputFiles) = args
     val inputFiles = "F:\\company\\juxiang\\data\\parquet\\part-r-00012.gz.parquet"
@@ -125,65 +109,6 @@ object UsersGraphx {
         "UID:" + x._1 + "," + x._2.mkString(",")
       }
       .saveAsTextFile(userResultOutputFiles + "2")
-
-    println("-------------以下是原开发------------")
-
-    // 找出当天数据中存在可以合并的用户关系
-    val testRDD = baseDataRdd.flatMap(
-      ids => ids.slice(1, ids.length).map(t => (t, ids(0)))
-    ).reduceByKey((a, b) => a.concat(",") + b)
-      //    (ANDROIDID:D6CE7BBD63E51047,1917408884)
-      //    (IMEIMD5:BB7A5419A02B101E7E03527D767E56A0,2053386494,1109206989)
-      //    (IMEIMD5:16B307389D31E456A937E2E0BD42E199,1554347286,1068198936,1591943639,108028904)
-      .map(_._2)
-    //    1084138263,311954394,1198438832,1892783687
-    //    1617343875
-    //    1668068236,477044713
-
-    //    testRDD.foreach(println)
-
-    testRDD
-      .flatMap(
-        shipline => {
-          val shipFields = shipline.split(",", shipline.length)
-          var i = 0
-          var k = 0
-          val allShips = scala.collection.mutable.ArrayBuffer[(Long, Long)]()
-          while (i < shipFields.length) {
-            while (k < shipFields.length) {
-              allShips += ((shipFields(i).toLong, shipFields(k).toLong))
-              k += 1
-            }
-            i += 1
-          }
-          allShips
-        }
-      )
-
-      //    .foreach(println)
-      .map(t => t._1 + " " + t._2).saveAsTextFile(userShipOutputFiles)
-    //      .foreach(println)
-    // 1612156872 1612156872
-    //    1638792447 1638792447
-
-
-    // 构建边集合
-    val graph = GraphLoader.edgeListFile(sc, userShipOutputFiles)
-    // 构建连通图的顶点
-    val cc = graph.connectedComponents().vertices
-
-    baseDataRdd.map {
-      line => (line(0).toString.toLong, line.slice(1, line.length).toSet)
-    }.join(cc).map {
-      case (id, (userids, cc)) => (cc, userids)
-    }.reduceByKey((a, b) => a ++ b).map(
-      t => {
-        val idStrs = t._2.mkString(",")
-        "UID:" + idStrs.hashCode + "," + idStrs
-      }
-    )
-      //  .foreach(println)
-      .saveAsTextFile(userResultOutputFiles)
 
     sc.stop()
   }

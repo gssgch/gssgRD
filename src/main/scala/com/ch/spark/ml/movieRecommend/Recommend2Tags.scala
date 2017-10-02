@@ -36,8 +36,8 @@ object Recommend2Tags {
     // 提取特征  用户   套餐  权重
 
 
-    val file = "F:\\company\\lomark\\HubeiMobile\\recommendData/orignal.log"
-    val file2 = "F:\\company\\lomark\\HubeiMobile\\recommendData/taocan.txt"
+    val file = "F:\\company\\lomark\\Hubei10086\\recommendData/orignal.log"
+    val file2 = "F:\\company\\lomark\\Hubei10086\\recommendData/taocan.txt"
     /** 提取特征(影片 ID 星级 事件戳) */
     val rawData = sc.textFile(file)
     val ratings = rawData.map(_.split(",")).map {
@@ -46,15 +46,30 @@ object Recommend2Tags {
         Rating(user.toInt, keys.toInt, rating.toDouble)
     }
 
-
     /** 训练推荐模型 */
     val rank = 50 //因子个数
     val iteratings = 10 //迭代
     val lambda = 0.01 //正则化参数
+
+    // 推荐给所有用户的方法
+    ALS.train(ratings, rank, iteratings, lambda)
+      .recommendProductsForUsers(3)
+//      .foreach(println)
+      .map{
+      case (hash,top)=>{
+        println("key="+hash)
+        val ids = top.map { case Rating(user, product, rating)=>product}
+            .mkString(",")
+        (hash,ids)
+      }
+    }
+//      .map(_._2)
+      .foreach(println)
+    sys.exit(0)
+
+
     // 使用ALS建立模型
     val model = ALS.train(ratings, rank, iteratings, lambda)
-
-
 
     /** predict函数方便的计算 给定用户对给定的预期评分 */
     val predictScore = model.predict(789, 123)

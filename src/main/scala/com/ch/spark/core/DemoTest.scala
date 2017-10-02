@@ -4,11 +4,15 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 /**
   * Created by ch on 2017/2/17.
+  * 面试题，给定两个数据集
+  * 数据集A id,age,name
+  * 数据集B    id,year,month,movie
+  * 要求，输出：id,age,name,year,month,movie(同一个用户，按year升序，没有数据B的id，用null补
   */
 object DemoTest {
   def main(args: Array[String]): Unit = {
     val conf = new SparkConf()
-      .setMaster("local[2]").setAppName("xx")
+      .setMaster("local[1]").setAppName("xx")
     conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
 
     val sc = new SparkContext(conf)
