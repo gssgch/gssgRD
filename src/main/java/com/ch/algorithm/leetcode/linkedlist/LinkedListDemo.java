@@ -21,30 +21,38 @@ public class LinkedListDemo {
 
 
 //        testAddTwoNumbers();
-        ListNode l1 = createList(7);
+        ListNode l1 = createList(6);
 //        printlnNode(l1);
 //        deleteNode(l1);
 //        printlnNode(l1);
+//        printlnNodeRec(l1);
+
 
 //        printlnNode(reverseList(l1));
 
 //        printlnNode(createListNodeTail(4));
 
-//        printlnNode(l1);
+        printlnNode(l1);
 
+        printlnNode(reverseBetween(l1, 3, 5));
 //        printlnNode(reverseList2(l1));
 //        printlnNode(reverseList3(l1));
 //        printlnNode(reverseList4(l1));
+//        printlnNode(reverseList5(l1));
 
 //        printlnNode(oddEvenList(l1));
 //        printlnNode(oddEvenList1(l1));
 //        printlnNode(oddEvenList2(l1));
 
-        ListNode l2 = createSortedList(new int[]{1, 1, 2, 4, 5, 5, 6, 7});
+        ListNode l2 = createSortedList(new int[]{1, 1, 2, 4});
 //        printlnNode(l2);
 //        printlnNode(deleteDuplicates(l2));
 //        printlnNode(deleteDuplicates2(l2));
 //        printlnNode(deleteDuplicates3(l2));
+
+//        printlnNode(deleteDuplicatesII(l2));
+//        printlnNode(deleteDuplicatesII2(l2));
+
 
 //        ListNode l3 = createSortedList(new int[]{2, 3, 5, 6, 7});
 //        printlnNode(mergeTwoLists(l2, l3));
@@ -61,59 +69,396 @@ public class LinkedListDemo {
 
 //        printlnNode(detectCycle(createCycleList(new int[]{1, 4, 5, 6, 7})), 10);
 
-        ListNode l3 = createSortedList(new int[]{1, 2, 3, 4,3, 2, 1});
+        ListNode l3 = createSortedList(new int[]{1, 1, 2, 1});
 //        printlnNode(l3);
 //        System.out.println(isPalindrome(l3));
 
-        ListNode l12 = createSortedList(new int []{9,8});
-        ListNode l13 =  createSortedList(new int []{1});
-        printlnNode(l12);
-        printlnNode(l13);
-        printlnNode(addTwoNumbers2(l12,l13));;
+        ListNode l12 = createSortedList(new int[]{1, 2, 3, 4});
+        ListNode l13 = createSortedList(new int[]{1, 2, 3, 4});
+
+//        printlnNode(l12);
+//        printlnNode(l13);
+//        printlnNode(addTwoNumbers2(l12,l13));;
+
+//        printlnNode(getIntersectionNode(l12,l13));
+//        printlnNode(getIntersectionNode2(l12,l13));
+//        printlnNode(getIntersectionNode3(l12,l13));
+
+//        printlnNode(removeNthFromEnd(l12,2));
+//        printlnNode(removeNthFromEnd2(l12,2));
+
+
+        ListNode a = createSortedList(new int[]{1, 2, 4, 3, 5});
+//        printlnNode(a);
+//        printlnNode(partition(a, 3));
+
+//        reorderList(a);
+//        reorderList2(a);
+
+//        printlnNode(rotateRight(a, 2));
+//        printlnNode(rotateRight2(a, 2));
 
     }
-    public static ListNode addTwoNumbers2(ListNode l1, ListNode l2) {
-        if(l1==null){
-            return l2;
+
+    /**将升序链表转换为平衡二叉树*/
+    public static TreeNode sortedListToBST(ListNode head) {
+        return rec(head,null);
+    }
+    // 在区间[head, tail)里递归，后面的tail是包括在内的，这样可以避免要多用一个指针来记录mid前的节点
+    public static TreeNode rec(ListNode head,ListNode tail){
+        if(head==tail){
+            return null;
         }
-        if(l2==null) return l1;
-        int sum = 0;
-        int carry =0;
-        ListNode head =null;
-        ListNode tail =null;
-        while(l1!=null&&l2!=null){
-            sum = l1.val+l2.val;
-            ListNode n = new ListNode(sum%10+carry);
-            carry = sum / 10;
-            if(head ==null){
-                head = n;
-            }else{
-                tail.next =n;
+        // 一次遍历找到中点的方法：快慢指针
+        ListNode fast =head; // 终点
+        ListNode slow = head;// 中点
+        while(fast!=tail&&fast.next!=tail){ // 注意停止条件
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        TreeNode root = new TreeNode(slow.val);
+        root.left=rec(head,slow);
+        root.right=rec(slow.next,tail);
+        return root;
+
+    }
+    /**
+     * 向右旋转链表，不借助多的指针
+     */
+    public static ListNode rotateRight2(ListNode head, int k) {
+        if (head == null || head.next == null) return head;
+        ListNode cpHead = head;
+        int i = 0;
+        while (cpHead.next != null) {
+            cpHead = cpHead.next;
+            i++;
+        }
+        cpHead.next = head;
+        for (int j = i - k % i; j > 0; j--) {
+            head = head.next;
+        }
+        cpHead = head.next; //
+        head.next = null;
+        return cpHead;
+    }
+
+    /**
+     * 向右旋转
+     * 1->2->3->4->5->NULL and k = 2,
+     * return 4->5->1->2->3->NULL.
+     */
+    public static ListNode rotateRight(ListNode head, int k) {
+        if (head == null || head.next == null) return head;
+        ListNode node = new ListNode(0);
+        node.next = head;
+        ListNode slow = node, fast = node;
+        int i = 0;
+        // fast指向尾结点 算出head的长度
+//        for (; fast.next != null; i++) {
+//            fast = fast.next;
+//        }
+        while (fast.next != null) {
+            fast = fast.next;
+            i++;
+        }
+        // slow指向要旋转的位置，就是旋转后链表的尾结点
+        for (int j = i - k % i; j > 0; j--) {
+            slow = slow.next;
+        }
+        // 把链表后半段放到前面去
+        fast.next = node.next;
+        node.next = slow.next;
+        slow.next = null;
+
+        return node.next;
+    }
+
+
+    /**
+     * 链表重排序
+     * Given {1,2,3,4}, reorder it to {1,4,2,3}.
+     */
+    public static void reorderList(ListNode head) {
+        if (head == null || head.next == null) {
+            return;
+        }
+        ListNode slow = head, fast = head;
+
+        // 下面这个判断和回文那个判断还不一样 这个正好fast走到终点 slow走到中点（奇数个）或差一步到中点（偶数个）
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        printlnNode(head);
+        ListNode head1 = head;
+        ListNode head2 = slow.next;
+        slow.next = null;
+        head2 = reverseList4(head2);
+
+        printlnNode("node1=", head1);
+        printlnNode("node2=", head2);
+
+        while (head2 != null && head1 != null) {
+            ListNode next = head2.next;
+            head2.next = head1.next;
+            head1.next = head2;
+            head1 = head2.next;
+            head2 = next;
+//            ListNode tmp1 = head1.next;
+//            ListNode tmp2 = head2.next;
+//            head1.next = head2;
+//            head2.next = tmp1;
+//            head1 = tmp1;
+//            head2 = tmp2;
+        }
+        printlnNode(head);
+
+    }
+
+    /**
+     * 对链表分区
+     */
+    public static ListNode partition(ListNode head, int x) {
+        ListNode node1 = new ListNode(0), node2 = new ListNode(0);
+        ListNode l1 = node1, l2 = node2;
+        while (head != null) {
+            if (head.val < x) {
+                l1.next = head;
+                l1 = head;
+            } else {
+                l2.next = head;
+                l2 = head;
             }
-            tail =n;
-            l1 = l1.next;
-            l2 = l2.next;
-            if((l1 ==null || l2 ==null) && carry!=0){
+            head = head.next;
+        }
+        l2.next = null;
+        l1.next = node2.next;
+        return node1.next;
+    }
+
+    /**
+     * leetcode解法 没怎么看明白
+     */
+    public ListNode RemoveNthFromEnd3(ListNode head, int n) {
+        ListNode h1 = head, h2 = head;
+        while (n-- > 0) h2 = h2.next;
+        if (h2 == null) return head.next;  // The head need to be removed, do it.
+        h2 = h2.next;
+
+        while (h2 != null) {
+            h1 = h1.next;
+            h2 = h2.next;
+        }
+        h1.next = h1.next.next;   // the one after the h1 need to be removed
+        return head;
+    }
+
+    /**
+     * 可以使用指针来完成单程解决方案。
+     * 快速移动一个指针 向前移动n + 1个位置，以保持两个指针之间的间隙，然后以相同的速度移动两个指针。
+     * 最后，当快速指针到达结束时，慢指针将在后面n + 1个位置 - 它正好可以跳过下一个节点。
+     */
+    public static ListNode removeNthFromEnd2(ListNode head, int n) {
+        if (head == null) return head;
+        ListNode start = new ListNode(0);
+        ListNode fast = start, slow = start;
+        slow.next = head;
+        for (int i = 1; i <= n + 1; i++) {
+            fast = fast.next;
+            printlnNode("22fast=", fast);
+        }
+
+        while (fast != null) {
+            slow = slow.next;
+            fast = fast.next;
+            printlnNode("33slow=", slow);
+            printlnNode("33fast=", fast);
+        }
+        slow.next = slow.next.next;
+        return start.next;
+    }
+
+    /**
+     * 给定一个链表，从列表的末尾删除第n个节点并返回它的头。
+     */
+    public static ListNode removeNthFromEnd(ListNode head, int n) {
+        if (head == null) return head;
+        Stack<Integer> s = new Stack<Integer>();
+        while (head != null) {
+            s.push(head.val);
+            head = head.next;
+        }
+        int i = 0;
+        ListNode h = new ListNode(0);
+        while (!s.empty()) {
+            int val = s.pop();
+            i++;
+            if (i == n) {
+                continue;
+            } else {
+                ListNode node = new ListNode(val);
+                // 0这个特殊节点要放在头部
+                node.next = h.next;
+                h.next = node;
+            }
+        }
+        return h.next;
+    }
+
+
+    /**
+     * 单链表交集节点  leetcode大神
+     * 我们可以使用两个迭代来做到这一点。
+     * 在第一次迭代中，在到达尾节点之后，我们将把一个链表的指针重置为另一个链表的头。
+     * 在第二次迭代中，我们将移动两个指针，直到它们指向同一个节点。
+     * 我们在第一次迭代中的操作将帮助我们消除差异。
+     * 因此，如果两个linkedlist相交，则第二次迭代中的会合点必须是交点。
+     * 如果两个链表根本没有交集，则第二次迭代中的会议指针必须是两个列表的尾节点，它是空的
+     * <p>
+     * 本地测试一直不通过
+     */
+    public static ListNode getIntersectionNode2(ListNode headA, ListNode headB) {
+        //boundary check
+        if (headA == null || headB == null) return null;
+
+        ListNode a = headA;
+        ListNode b = headB;
+
+        //if a & b have different len, then we will stop the loop after second iteration
+        while (a != b) {
+            //for the end of first iteration, we just reset the pointer to the head of another linkedlist
+            a = a == null ? headB : a.next;
+            b = b == null ? headA : b.next;
+            // 这两行重点，第一次迭代结束，将指针重置为另一个链表的头
+        }
+        return a;
+    }
+
+    /**
+     * leetcode上写法
+     */
+    public static ListNode getIntersectionNode3(ListNode headA, ListNode headB) {
+        int lenA = calcLen(headA), lenB = calcLen(headB);
+        // move headA and headB to the same start point
+        while (lenA > lenB) {
+            headA = headA.next;
+            lenA--;
+        }
+        while (lenA < lenB) {
+            headB = headB.next;
+            lenB--;
+        }
+        // find the intersection until end
+        // 本地要判断val，否则一直返回false，leetcode上可以用headA!=headB来提交，不能用.val来判断 ？？？
+        while (headA.val != headB.val) {
+            headA = headA.next;
+            headB = headB.next;
+        }
+        return headA;
+    }
+
+    /**
+     * 找到两个单链表 交集开始的节点
+     */
+    public static ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        int len1 = calcLen(headA);
+        int len2 = calcLen(headB);
+        // head为长链表  tail为短链表
+        ListNode head = len1 > len2 ? headA : headB;
+        ListNode tail = len1 > len2 ? headB : headA;
+        // 长链表先空转 长度差次
+        for (int i = 0; i < Math.abs(len1 - len2); i++) {
+            head = head.next;
+        }
+        // 同时走 判断是否相等 相等即有交点
+        while (head != null && tail != null) {
+            if (head.val == tail.val) {
+                return head;
+            }
+            head = head.next;
+            tail = tail.next;
+        }
+        return null;
+    }
+
+    public static int calcLen(ListNode head) {
+        int len = 0;
+        while (head != null) {
+            len++;
+            head = head.next;
+        }
+        return len;
+    }
+
+
+    /**
+     * 链表相加 leetcode思路
+     */
+    public ListNode addTwoNumbers3(ListNode l1, ListNode l2) {
+        ListNode c1 = l1;
+        ListNode c2 = l2;
+        ListNode sentinel = new ListNode(0);
+        ListNode d = sentinel;
+        int sum = 0;
+        while (c1 != null || c2 != null) {
+            sum /= 10;
+            if (c1 != null) {
+                sum += c1.val;
+                c1 = c1.next;
+            }
+            if (c2 != null) {
+                sum += c2.val;
+                c2 = c2.next;
+            }
+            d.next = new ListNode(sum % 10);
+            d = d.next;
+        }
+        if (sum / 10 == 1)
+            d.next = new ListNode(1);
+        return sentinel.next;
+    }
+
+    /**
+     * 链表相加
+     */
+    public static ListNode addTwoNumbers2(ListNode l1, ListNode l2) {
+
+        int carry = 0;
+        ListNode head = null;
+        ListNode tail = null;
+        while (l1 != null || l2 != null) {
+            int sum = 0;
+            if (l1 != null) {
+                sum += l1.val;
+                l1 = l1.next;
+            }
+            if (l2 != null) {
+                sum += l2.val;
+                l2 = l2.next;
+            }
+//            sum = l1.val+l2.val;
+            ListNode n = new ListNode((sum % 10 + carry) % 10);
+            carry = (sum + carry) / 10;
+            if (head == null) {
+                head = n;
+            } else {
+                tail.next = n;
+            }
+            tail = n;
+
+            if (l1 == null && l2 == null && carry != 0) {
                 ListNode n2 = new ListNode(carry);
                 tail.next = n2;
-                tail =n2;
+                tail = n2;
             }
         }
-        while(l1!=null){
-            tail.next = l1;
-            tail = l1;
-            l1 = l1.next;
-        }
-        while(l2!=null){
-            tail.next = l2;
-            tail = l2;
-            l2 = l2.next;
-        }
-        if(tail!=null){
-            tail.next =null;
+
+        if (tail != null) {
+            tail.next = null;
         }
         return head;
     }
+
     /**
      * 回文链表
      */
@@ -294,15 +639,59 @@ public class LinkedListDemo {
         return node;
     }
 
-    public static ListNode swapPairs2(ListNode head) {
+    /**
+     * 成对翻转链表  递归2
+     */
+    public static ListNode swapPairsRec2(ListNode head) {
+        if (head == null || head.next == null) return head;
+        ListNode second = head.next;
+        ListNode third = second.next;
+        second.next = head;
+        head.next = swapPairsRec2(third);
+        return second;
+    }
+
+    /**
+     * 成对翻转链表  递归
+     */
+    public static ListNode swapPairsRec(ListNode head) {
         if ((head == null) || (head.next == null))
             return head;
         ListNode n = head.next;
-        head.next = swapPairs2(head.next.next);
+        head.next = swapPairsRec(head.next.next);
         n.next = head;
         return n;
     }
 
+    /**
+     * 非递归版本  没看明白
+     * 需要运用fakehead来指向原指针头，防止丢链，用两个指针，
+     * ptr1始终指向需要交换的pair的前面一个node，ptr2始终指向需要交换的pair的第一个node。
+     * 然后就是进行链表交换。
+     * 需要用一个临时指针nextstart， 指向下一个需要交换的pair的第一个node，保证下一次交换的正确进行。
+     * 然后就进行正常的链表交换，和指针挪动就好。
+     */
+    public ListNode swapPairs2(ListNode head) {
+        if (head == null || head.next == null)
+            return head;
+        ListNode fakehead = new ListNode(-1);
+        fakehead.next = head;
+        ListNode ptr1 = fakehead;
+        ListNode ptr2 = head;
+        while (ptr2 != null && ptr2.next != null) {
+            ListNode nextstart = ptr2.next.next;
+            ptr2.next.next = ptr2;
+            ptr1.next = ptr2.next;
+            ptr2.next = nextstart;
+            ptr1 = ptr2;
+            ptr2 = ptr2.next;
+        }
+        return fakehead.next;
+    }
+
+    /**
+     * 非递归版本  没看明白
+     */
     public ListNode swapPairs(ListNode head) {
         ListNode dummy = new ListNode(0);
         dummy.next = head;
@@ -318,16 +707,6 @@ public class LinkedListDemo {
         return dummy.next;
     }
 
-    public static ListNode swapPairs3(ListNode head) {
-        if (head == null || head.next == null) return head;
-        ListNode second = head.next;
-        ListNode third = second.next;
-
-        second.next = head;
-        head.next = swapPairs3(third);
-
-        return second;
-    }
 
     /**
      * 合并两个有序列表
@@ -365,6 +744,47 @@ public class LinkedListDemo {
         return mergeHead;
     }
 
+    /**
+     * 删除所有重复元素 递归
+     */
+    public static ListNode deleteDuplicatesII2(ListNode head) {
+        if (head == null || head.next == null) return head;
+        if (head.next != null && head.val == head.next.val) {
+            while (head.next != null && head.val == head.next.val) {
+                head = head.next;
+            }
+            return deleteDuplicatesII2(head.next);
+        } else {
+            head.next = deleteDuplicatesII2(head.next);
+        }
+        return head;
+    }
+
+    /**
+     * 删除所有的重复元素 1->1->2->3 => 2->3
+     * 使用两个指针，pre跟踪节点之前的dup节点
+     * cur找到dup的最后一个结点
+     */
+    public static ListNode deleteDuplicatesII(ListNode head) {
+        if (head == null || head.next == null) return head;
+        ListNode h = new ListNode(0);
+        h.next = head;
+        ListNode pre = h;
+        ListNode cur = head;
+        while (cur != null) {
+            while (cur.next != null && cur.val == cur.next.val) {
+                cur = cur.next; // while循环找到dup的最后一个节点
+            }
+            // 这里判断的是节点，不是某一节点的值，我是这么理解的
+            if (pre.next == cur) { // 没有重复，向下移动指针
+                pre = pre.next;
+            } else { // 检测到重复 删除节点
+                pre.next = cur.next;
+            }
+            cur = cur.next;
+        }
+        return h.next;
+    }
 
     /**
      * 删除有序列表的重复元素  递归  没完全看明白
@@ -502,9 +922,138 @@ public class LinkedListDemo {
         }
         return node;
     }
+    public static ListNode reverseBetween2(ListNode head, int m, int n) {
+        if(head == null) return null;
+        ListNode dummy = new ListNode(0); // create a dummy node to mark the head of this list
+        dummy.next = head;
+        ListNode pre = dummy; // make a pointer pre as a marker for the node before reversing
+        for(int i = 0; i<m-1; i++) pre = pre.next;
+
+        ListNode start = pre.next; // a pointer to the beginning of a sub-list that will be reversed
+        ListNode then = start.next; // a pointer to a node that will be reversed
+
+        // 1 - 2 -3 - 4 - 5 ; m=2; n =4 ---> pre = 1, start = 2, then = 3
+        // dummy-> 1 -> 2 -> 3 -> 4 -> 5
+
+        for(int i=0; i<n-m; i++)
+        {
+            start.next = then.next;
+            then.next = pre.next;
+            pre.next = then;
+            then = start.next;
+        }
+
+        // first reversing : dummy->1 - 3 - 2 - 4 - 5; pre = 1, start = 2, then = 4
+        // second reversing: dummy->1 - 4 - 3 - 2 - 5; pre = 1, start = 2, then = 5 (finish)
+
+        return dummy.next;
+
+    }
+
+    /**翻转链表 带起始条件的*/
+    public static ListNode reverseBetween(ListNode head, int m, int n) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode pre = null;
+        ListNode cur = dummy;
+        int count = 0;
+        while(cur.next!=null){
+            pre = cur;
+            cur=cur.next;
+            count++;
+            if(count==m){
+                break;
+            }
+        }
+
+        // 下面这个for循环就是就地翻转链表的逻辑
+        ListNode post = cur.next;
+        cur.next=null;
+        for(int i=m;i<n;i++){
+            ListNode tmp = post.next;
+            post.next = cur;
+            cur = post;
+            post=tmp;
+        }
+
+        // cur 就是翻转后的
+        // post就是最后剩下的
+        // 这里注意顺序 这里的pre是翻转开始点和前一个
+        pre.next.next=post;
+        pre.next=cur;
+
+        return dummy.next;
+    }
+    public ListNode reverseBetween3(ListNode head, int m, int n) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+
+        if (m >= n) {
+            return head;
+        }
+
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+
+        ListNode pre = dummy;
+
+        //1. get the pre node before m.
+        for (int i = m; i > 1; i--) {
+            pre = pre.next;
+        }
+
+        // record the tail of the reversed link.
+        ListNode reverseTail = pre.next;
+        pre.next = null;
+
+        // reverse the link.
+        ListNode cur = reverseTail;
+
+        for (int i = n - m + 1; i > 0; i--) {
+            if (i == 1) {
+                // 这里是翻转段后的第一个元素 .
+                reverseTail.next = cur.next;
+            }
+
+            ListNode tmp = cur.next;
+
+            cur.next = pre.next;
+            pre.next = cur;
+
+            cur = tmp;
+        }
+
+        return dummy.next;
+    }
+
+    /**
+     * 链表反转  利用三个指针  pre  q  next
+     * 第一步 先把头结点分出来，然后把剩下的结点给q 进入循环
+     * 循环中，q.next 给 next ，把 q指向pre pre和q结点都向后移动
+     * 这里一定要理解，pre节点是反着来的，并不是常见的从前往后，应该是从后往前，
+     * 把q.next指向pre，然后把q赋给pre（也就是pre节点前进一步），相当于 null->1->2这种顺序增加元素
+     */
+    public static ListNode reverseList5(ListNode head) {
+        if (head == null) return head;
+        ListNode pre = head, q = head.next;
+        pre.next = null;
+        while (q != null) {
+            ListNode next = q.next;
+            q.next = pre;
+            pre = q;
+            q = next;
+        }
+        return pre;
+    }
 
     /**
      * 翻转链表 就地迭代法  没怎么看明白
+     * <p>
+     * 其实这个和reverseList5一样的，没有上个好理解，相当于把newHead当做pre，head当做q了
      */
     public static ListNode reverseList4(ListNode head) {
     /* iterative solution */
@@ -601,7 +1150,7 @@ public class LinkedListDemo {
         ListNode l1 = null;
         for (int i = 0; i < len; i++) {
             int val = (int) Math.round(Math.random() * 10);
-            if(val>=10){
+            if (val >= 10) {
                 val = 9;
             }
             if (isSorted) {
@@ -744,10 +1293,20 @@ public class LinkedListDemo {
             pre = pre + ":";
         }
         System.out.println(pre + str);
-
     }
 
-    /** 两个链表相加 */
+    // 递归打印
+    public static void printlnNodeRec(ListNode list) {
+        if (list != null) {
+            System.out.println(list.val + "->");
+            ListNode node = list.next;
+            printlnNodeRec(node);
+        }
+    }
+
+    /**
+     * 两个链表相加
+     */
     public static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
         Stack<Integer> s1 = new Stack<Integer>();
         Stack<Integer> s2 = new Stack<Integer>();
