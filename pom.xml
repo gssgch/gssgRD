@@ -72,13 +72,30 @@
             <version>${scala.version}</version>
         </dependency>
 
-
+        <!--推荐 评估里用到-->
+        <dependency>
+            <groupId>org.jblas</groupId>
+            <artifactId>jblas</artifactId>
+            <version>1.2.3</version>
+        </dependency>
 
 
     </dependencies>
 
     <build>
-        <sourceDirectory>src</sourceDirectory>
+        <!--
+        // 可以在这里指定resource的文件，不知道默认为resources目录下所有文件
+        <resources>
+            <resource>
+                <directory>src/main/scala/com/lomark/tools/ranking/data/</directory>
+                <includes>
+                    <include>*</include>
+                </includes>
+            </resource>
+        </resources>-->
+        <!--这个项目中有两种开发语言，故不能指定源码目录为scala，否则找不到定外一种语言的目录，需指定源码目录为src-->
+        <!--<sourceDirectory>src/main/scala</sourceDirectory>-->
+        <testSourceDirectory>src/test</testSourceDirectory>
         <plugins>
             <plugin>
                 <!-- see http://davidb.github.com/scala-maven-plugin -->
