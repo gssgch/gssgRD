@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/gssgSpark.iml" filepath="$PROJECT_DIR$/gssgSpark.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gssgRD.iml" filepath="$PROJECT_DIR$/gssgRD.iml" />
     </modules>
   </component>
 </project>
